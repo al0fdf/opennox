@@ -773,7 +773,7 @@ func (s *Server) Sub_4F40A0(obj *Object) int8 {
 		if v3 != "" {
 			return -1
 		}
-	} else if noxflags.HasGame(noxflags.GameHost) && obj.Field192 != -1 {
+	} else if noxflags.HasGame(noxflags.GameHost) && obj.ScriptPickup.Func != -1 {
 		return -1
 	}
 	return 0

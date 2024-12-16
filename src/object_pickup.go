@@ -28,7 +28,43 @@ func nox_xxx_inventoryCountObjects_4E7D30(a1 *server.Object, a2 int32) int {
 	return cnt
 }
 
-func nox_xxx_pickupDefault_4F31E0(obj *server.Object, item *server.Object, a3 int) int {
+func nox_xxx_inventoryServPlace_4F36F0(obj *server.Object, it *server.Object, a3 int, a4 int) bool {
+	s := noxServer
+	if obj == nil || it == nil {
+		return false
+	}
+	if obj.CarryCapacity == 0 {
+		return false
+	}
+	if it.Flags().Has(object.FlagDestroyed) {
+		return false
+	}
+	if obj.Flags().Has(object.FlagDead) {
+		return false
+	}
+	if !s.Types.ByInd(int(it.TypeInd)).Allowed() {
+		return false
+	}
+	if !obj.Class().HasAny(object.MaskUnits) {
+		return false
+	}
+	if !obj.CallPickup(it, a3, a4) {
+		return false
+	}
+	if it.Flags().Has(object.FlagNoCollide) {
+		it.ObjFlags &^= object.FlagNoCollide
+		if it.Collide != nil {
+			legacy.Sub_5117F0(it)
+		}
+	}
+	if it.ScriptPickup.Func != -1 {
+		s.noxScript.ScriptCallback(&it.ScriptPickup, obj, it, server.NoxEventInventoryPlace)
+		it.ScriptPickup.Func = -1
+	}
+	return true
+}
+
+func nox_xxx_pickupDefault_4F31E0(obj, item *server.Object, a3 int) int {
 	s := noxServer
 	if !noxflags.HasGame(noxflags.GameModeQuest) && item.TeamPtr().Has() && !obj.TeamPtr().SameAs(item.TeamPtr()) {
 		if tm := s.Teams.ByID(item.TeamVal.ID); tm != nil {

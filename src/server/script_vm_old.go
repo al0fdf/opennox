@@ -1145,7 +1145,7 @@ func (s *NoxScriptVM) Nox_script_objCallbackName_508CB0(obj *Object, event int) 
 		if noxflags.HasGame(noxflags.GameFlag22 | noxflags.GameFlag23) {
 			return alloc.GoString((*byte)(sd)), true
 		}
-		return funcs[obj.Field192].Name(), true
+		return funcs[obj.ScriptPickup.Func].Name(), true
 	}
 	cl := obj.Class()
 	switch {

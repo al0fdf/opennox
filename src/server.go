@@ -85,6 +85,7 @@ func NewServer(log *slog.Logger, pr console.Printer, sm *strman.StringManager) *
 	s.ai.Init(s)
 	s.noxScript.Init(s)
 	s.MapSend.OnEndReceive = legacy.Sub_4DE410
+	s.Objs.DefaultPickup = nox_xxx_pickupDefault_4F31E0
 	s.Objs.XFerInvLight = legacy.Get_nox_xxx_XFerInvLight_4F5AA0()
 	return s
 }

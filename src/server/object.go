@@ -139,7 +139,8 @@ type serverObjects struct {
 	lastScriptID    ObjectScriptID
 	PendingActions  []func()
 
-	XFerInvLight unsafe.Pointer
+	XFerInvLight  unsafe.Pointer
+	DefaultPickup func(obj, item *Object, a3 int) int
 }
 
 func (s *serverObjects) init(h uintptr) {
@@ -371,7 +372,7 @@ func (s *serverObjects) NewObject(t *ObjectType) *Object {
 	obj.Death = t.Death
 	obj.ScriptVars = nil
 	obj.DeathData = t.DeathData
-	obj.Field192 = -1
+	obj.ScriptPickup.Func = -1
 	if noxflags.HasGame(noxflags.GameFlag22|noxflags.GameFlag23) && (obj.Class().HasAny(0x20A02) || obj.Xfer == s.XFerInvLight || obj.Weight != 0xff) {
 		obj.Field189, _ = alloc.Malloc(2572)
 	}
@@ -657,7 +658,7 @@ type Object struct {
 	Collide       unsafe.Pointer             // 174, 696; func(*Object, *Object, int)
 	CollideData   unsafe.Pointer             // 175, 700
 	Xfer          unsafe.Pointer             // 176, 704; func(*Object, int) int
-	Pickup        unsafe.Pointer             // 177, 708
+	Pickup        unsafe.Pointer             // 177, 708; func(*Object, *Object, int, int) int
 	Drop          unsafe.Pointer             // 178, 712
 	Damage        unsafe.Pointer             // 179, 716; func(*Object, *Object, int, int, int) int
 	DamageSound   unsafe.Pointer             // 180, 720
@@ -671,8 +672,7 @@ type Object struct {
 	Field188      uint32                     // 188, 752
 	Field189      unsafe.Pointer             // 189, 756
 	ScriptVars    unsafe.Pointer             // 190, 760; []uint32
-	Field191      uint32                     // 191, 764
-	Field192      int                        // 192, 768
+	ScriptPickup  ScriptCallback             // 191, 764
 	serverHandle  uintptr                    // EXT
 	objectHandle  uintptr                    // EXT
 }
@@ -1373,6 +1373,13 @@ func (obj *Object) CallCollide(a2, a3 int) {
 	if obj.Collide != nil {
 		ccall.CallVoidUPtr3(obj.Collide, uintptr(obj.CObj()), uintptr(a2), uintptr(a3))
 	}
+}
+
+func (obj *Object) CallPickup(it *Object, a3, a4 int) bool {
+	if obj.Pickup == nil {
+		return obj.Server().Objs.DefaultPickup(obj, it, a3) != 0
+	}
+	return ccall.CallIntUPtr4(obj.Pickup, uintptr(obj.CObj()), uintptr(it.CObj()), uintptr(a3), uintptr(a4)) != 0
 }
 
 func (obj *Object) CallDamage(who Obj, a3 Obj, dmg int, typ object.DamageType) bool {

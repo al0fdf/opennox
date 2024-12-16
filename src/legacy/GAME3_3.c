@@ -10827,57 +10827,6 @@ int nox_xxx_pickupTreasure_4F3580(int a1, int a2, int a3) {
 	return 1;
 }
 
-//----- (004F36F0) --------------------------------------------------------
-int nox_xxx_inventoryServPlace_4F36F0(nox_object_t* a1p, nox_object_t* a2p, int a3, int a4) {
-	int a1 = a1p;
-	int a2 = a2p;
-	int v4;                        // eax
-	int (*v5)(int, int, int, int); // eax
-	int v6;                        // eax
-	int v7;                        // ebx
-	int v8;                        // eax
-
-	if (!a1) {
-		return 0;
-	}
-	if (!a2) {
-		return 0;
-	}
-	if (!*(uint16_t*)(a1 + 490)) {
-		return 0;
-	}
-	if (*(uint8_t*)(a2 + 16) & 0x20) {
-		return 0;
-	}
-	v4 = *(uint32_t*)(a1 + 16);
-	if ((v4 & 0x8000) != 0 || !nox_xxx_getUnitDefDd10_4E3BA0(*(unsigned short*)(a2 + 4)) ||
-		!(*(uint8_t*)(a1 + 8) & 6)) {
-		return 0;
-	}
-	v5 = *(int (**)(int, int, int, int))(a2 + 708);
-	if (v5) {
-		v6 = v5(a1, a2, a3, a4);
-	} else {
-		v6 = nox_xxx_pickupDefault_4F31E0(a1, a2, a3);
-	}
-	v7 = v6;
-	if (v6) {
-		v8 = *(uint32_t*)(a2 + 16);
-		if (v8 & 0x40) {
-			LOBYTE(v8) = v8 & 0xBF;
-			*(uint32_t*)(a2 + 16) = v8;
-			if (*(uint32_t*)(a2 + 696)) {
-				sub_5117F0(a2);
-			}
-		}
-		if (*(int*)(a2 + 768) != -1) {
-			nox_xxx_scriptCallByEventBlock_502490((int*)(a2 + 764), a1, a2, 18);
-			*(uint32_t*)(a2 + 768) = -1;
-		}
-	}
-	return v7;
-}
-
 //----- (004F3B00) --------------------------------------------------------
 int nox_xxx_pickupAmmo_4F3B00(int a1, nox_object_t* item, int a3, int a4) {
 	int v5;             // eax

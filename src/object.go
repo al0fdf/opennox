@@ -858,6 +858,10 @@ func (obj *Object) CallCollide(a2, a3 int) {
 	obj.SObj().CallCollide(a2, a3)
 }
 
+func (obj *Object) CallPickup(it server.Obj, a3, a4 int) bool {
+	return obj.SObj().CallPickup(server.ToObject(it), a3, a4)
+}
+
 func (obj *Object) CallDrop(it server.Obj, pos types.Pointf) int {
 	if obj.Drop == nil {
 		return 0
@@ -1156,7 +1160,7 @@ func (obj *Object) DoPickup(item *server.Object) bool {
 			legacy.Nox_xxx_playerCanCarryItem_513B00(obj.SObj(), it)
 		}
 	}
-	if legacy.Nox_xxx_inventoryServPlace_4F36F0(obj.SObj(), it, 1, 1) == 0 {
+	if !nox_xxx_inventoryServPlace_4F36F0(obj.SObj(), it, 1, 1) {
 		return false
 	}
 	if isPlayerInCoop && int(it.TypeInd) != gold {

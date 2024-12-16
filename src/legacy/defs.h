@@ -385,7 +385,7 @@ typedef struct nox_object_t {
 	void* func_collide;      // 174, 696
 	void* collide_data;      // 175, 700
 	int (*func_xfer)(nox_object_t*, int); // 176, 704
-	void* func_pickup;       // 177, 708
+	int (*func_pickup)(nox_object_t*, nox_object_t*, int, int); // 177, 708
 	void* func_drop;         // 178, 712
 	int (*func_damage)(nox_object_t*, nox_object_t*, int, int, int); // 179, 716
 	void* func_damage_sound; // 180, 720
@@ -399,8 +399,8 @@ typedef struct nox_object_t {
 	uint32_t field_188;      // 188, 752
 	void* field_189;         // 189, 756
 	uint32_t field_190;      // 190, 760
-	uint32_t field_191;      // 191, 764
-	int field_192;           // 192, 768
+	uint32_t script_pickup_flags; // 191, 764
+	int script_pickup_func;       // 192, 768
 } nox_object_t;
 _Static_assert(sizeof(nox_object_t) == 772, "wrong size of nox_object_t structure!");
 
