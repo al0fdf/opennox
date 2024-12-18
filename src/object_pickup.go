@@ -15,19 +15,6 @@ var (
 	cheatAllowAll = false
 )
 
-func nox_xxx_inventoryCountObjects_4E7D30(a1 *server.Object, a2 int32) int {
-	if a1 == nil {
-		return 0
-	}
-	var cnt int
-	for it := a1.InvFirstItem; it != nil; it = it.InvNextItem {
-		if a2 == 0 || int32(it.TypeInd) == a2 && !it.Flags().Has(object.FlagDestroyed) {
-			cnt++
-		}
-	}
-	return cnt
-}
-
 func nox_xxx_inventoryServPlace_4F36F0(obj *server.Object, it *server.Object, a3 int, a4 int) bool {
 	s := noxServer
 	if obj == nil || it == nil {
@@ -64,7 +51,7 @@ func nox_xxx_inventoryServPlace_4F36F0(obj *server.Object, it *server.Object, a3
 	return true
 }
 
-func nox_xxx_pickupDefault_4F31E0(obj, item *server.Object, a3 int) int {
+func nox_xxx_pickupDefault_4F31E0(obj, item *server.Object, a3 int) bool {
 	s := noxServer
 	if !noxflags.HasGame(noxflags.GameModeQuest) && item.TeamPtr().Has() && !obj.TeamPtr().SameAs(item.TeamPtr()) {
 		if tm := s.Teams.ByID(item.TeamVal.ID); tm != nil {
@@ -72,14 +59,14 @@ func nox_xxx_pickupDefault_4F31E0(obj, item *server.Object, a3 int) int {
 				ud := obj.UpdateDataPlayer()
 				s.NetInformTextMsg(ud.Player.PlayerIndex(), 16, int(tm.ColorInd))
 			}
-			return 0
+			return false
 		}
 	}
 	if item.InvHolder != nil {
-		return 0
+		return false
 	}
 	if obj.CarryCapacity == 0 {
-		return 0
+		return false
 	}
 	weight := 0
 	for it := obj.InvFirstItem; it != nil; it = it.InvNextItem {
@@ -87,37 +74,38 @@ func nox_xxx_pickupDefault_4F31E0(obj, item *server.Object, a3 int) int {
 	}
 	if int(item.Weight) > int(obj.CarryCapacity)*2-weight {
 		s.NetPriMsgToPlayer(obj, "pickup.c:CarryingTooMuch", 0)
-		return 0
+		s.Log.Info("can't pickup; carrying too much", "obj", obj.String(), "item", item.String())
+		return false
 	}
 	if item.Class().Has(object.ClassFood) {
-		cnt := nox_xxx_inventoryCountObjects_4E7D30(obj, int32(item.TypeInd))
-		max := 3
+		cnt := obj.CountInventoryWithType(int(item.TypeInd))
+		maxCnt := 3
 		if noxflags.HasGame(noxflags.GameModeQuest | noxflags.GameModeCoop) {
-			max = 9
+			maxCnt = 9
 		}
-		if cnt >= max {
+		if cnt >= maxCnt {
 			s.NetPriMsgToPlayer(obj, "pickup.c:MaxSameItem", 0)
-			return 0
+			s.Log.Info("can't pickup; carrying too many items of this kind", "obj", obj.String(), "item", item.String())
+			return false
 		}
 	}
 	s.ObjectDeleteLast(item)
 	legacy.Nox_xxx_inventoryPutImpl_4F3070(obj, item, a3)
-	return 1
+	return true
 }
 
-func nox_objectPickupAudEvent_4F3D50(obj1 *server.Object, obj2 *server.Object, a3 int) int {
+func nox_objectPickupAudEvent_4F3D50(obj1 *server.Object, obj2 *server.Object, a3 int) bool {
 	s := noxServer
 	if obj1 == nil || obj2 == nil {
-		return 0
+		return false
 	}
-	ok := nox_xxx_pickupDefault_4F31E0(obj1, obj2, a3)
-	if ok == 0 {
-		return ok
+	if !nox_xxx_pickupDefault_4F31E0(obj1, obj2, a3) {
+		return false
 	}
 	if snd := s.PickupSound(obj2.TypeInd); snd != 0 {
 		s.Audio.EventObj(snd, obj1, 0, 0)
 	}
-	return ok
+	return true
 }
 
 func sub_57B370(cl object.Class, sub object.SubClass, typ int) byte {
@@ -149,12 +137,12 @@ func nox_xxx_playerClassCanUseItem_57B3D0(item *server.Object, cl player.Class) 
 	return ((byte(1) << cl) & sub_57B370(item.Class(), item.SubClass(), int(item.TypeInd))) != 0
 }
 
-func nox_xxx_pickupPotion_4F37D0(obj *server.Object, potion *server.Object, a3 int) int {
+func nox_xxx_pickupPotion_4F37D0(obj *server.Object, potion *server.Object, a3 int) bool {
 	s := noxServer
 	if noxflags.HasGame(0x2000) && !noxflags.HasGame(4096) && obj.Class().Has(object.ClassPlayer) && !nox_xxx_playerClassCanUseItem_57B3D0(potion, obj.UpdateDataPlayer().Player.PlayerClass()) {
 		s.NetPriMsgToPlayer(obj, "pickup.c:ObjectEquipClassFail", 0)
 		s.Audio.EventObj(sound.SoundNoCanDo, obj, 2, obj.NetCode)
-		return 0
+		return false
 	}
 	if !s.Players.CheckXxx(obj) {
 		consumed := false
@@ -189,17 +177,17 @@ func nox_xxx_pickupPotion_4F37D0(obj *server.Object, potion *server.Object, a3 i
 			aud := s.Spells.DefByInd(spell.SPELL_CURE_POISON).GetOnSound()
 			s.Audio.EventObj(aud, obj, 0, 0)
 			s.DelayedDelete(potion)
-			return 1
+			return true
 		}
 		if consumed {
 			s.DelayedDelete(potion)
-			return 1
+			return true
 		}
 	}
 	legacy.Nox_xxx_decay_5116F0(potion)
-	res := nox_xxx_pickupDefault_4F31E0(obj, potion, a3)
-	if res == 1 {
+	ok := nox_xxx_pickupDefault_4F31E0(obj, potion, a3)
+	if ok {
 		s.Audio.EventObj(sound.SoundPotionPickup, obj, 0, 0)
 	}
-	return res
+	return ok
 }

@@ -2,6 +2,7 @@ package opennox
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/opennox/libs/object"
 	"github.com/opennox/libs/player"
@@ -502,6 +503,33 @@ func (obj nsObj) Items(conditions ...ns4.ObjCond) []ns4.Obj {
 func (obj nsObj) Equipment(conditions ...ns4.ObjCond) []ns4.Obj {
 	conditions = append(conditions, ns4.HasObjFlags(object.FlagEquipped))
 	return obj.Items(conditions...)
+}
+
+func (obj nsObj) Weight() int {
+	return int(obj.Object.Weight)
+}
+
+func (obj nsObj) InventoryWeight() int {
+	total := 0
+	for it := obj.FirstItem(); it != nil; it = it.NextItem() {
+		total += int(it.Weight)
+	}
+	return total
+}
+
+func (obj nsObj) CarryMaxWeight() int {
+	return int(obj.CarryCapacity) * 2
+}
+
+func (obj nsObj) SetCarryMaxWeight(v int) {
+	c := v / 2
+	if v%2 != 0 {
+		c++
+	}
+	if c < 0 || c > math.MaxUint16 {
+		c = math.MaxUint16
+	}
+	obj.CarryCapacity = uint16(c)
 }
 
 type nsObjInItems struct {

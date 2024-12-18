@@ -140,7 +140,7 @@ type serverObjects struct {
 	PendingActions  []func()
 
 	XFerInvLight  unsafe.Pointer
-	DefaultPickup func(obj, item *Object, a3 int) int
+	DefaultPickup func(obj, item *Object, a3 int) bool
 }
 
 func (s *serverObjects) init(h uintptr) {
@@ -823,6 +823,34 @@ func (obj *Object) HasItem(item *Object) bool {
 	return false
 }
 
+func (obj *Object) CountInventory(filter func(it *Object) bool) int {
+	if obj == nil {
+		return 0
+	}
+	var cnt int
+	for it := obj.InvFirstItem; it != nil; it = it.InvNextItem {
+		if it.Flags().Has(object.FlagDestroyed) {
+			continue
+		}
+		if filter == nil || filter(it) {
+			cnt++
+		}
+	}
+	return cnt
+}
+
+func (obj *Object) CountInventoryWithType(typ int) int { // nox_xxx_inventoryCountObjects_4E7D30
+	if obj == nil {
+		return 0
+	}
+	if typ == 0 {
+		return obj.CountInventory(nil)
+	}
+	return obj.CountInventory(func(it *Object) bool {
+		return int(it.TypeInd) == typ
+	})
+}
+
 func (obj *Object) NextOwned512() *Object {
 	return obj.Field128
 }
@@ -1377,7 +1405,7 @@ func (obj *Object) CallCollide(a2, a3 int) {
 
 func (obj *Object) CallPickup(it *Object, a3, a4 int) bool {
 	if obj.Pickup == nil {
-		return obj.Server().Objs.DefaultPickup(obj, it, a3) != 0
+		return obj.Server().Objs.DefaultPickup(obj, it, a3)
 	}
 	return ccall.CallIntUPtr4(obj.Pickup, uintptr(obj.CObj()), uintptr(it.CObj()), uintptr(a3), uintptr(a4)) != 0
 }

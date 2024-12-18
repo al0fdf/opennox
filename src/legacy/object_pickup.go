@@ -16,9 +16,9 @@ import (
 )
 
 var (
-	Nox_xxx_pickupDefault_4F31E0         func(cobj1 *server.Object, cobj2 *server.Object, a3 int) int
-	Nox_objectPickupAudEvent_4F3D50      func(cobj1 *server.Object, cobj2 *server.Object, a3 int) int
-	Nox_xxx_pickupPotion_4F37D0          func(cobj1 *server.Object, cobj2 *server.Object, a3 int) int
+	Nox_xxx_pickupDefault_4F31E0         func(cobj1 *server.Object, cobj2 *server.Object, a3 int) bool
+	Nox_objectPickupAudEvent_4F3D50      func(cobj1 *server.Object, cobj2 *server.Object, a3 int) bool
+	Nox_xxx_pickupPotion_4F37D0          func(cobj1 *server.Object, cobj2 *server.Object, a3 int) bool
 	Nox_xxx_playerClassCanUseItem_57B3D0 func(item *server.Object, cl player.Class) bool
 	Sub_57B370                           func(cl object.Class, sub object.SubClass, typ int) byte
 )
@@ -44,17 +44,17 @@ func init() {
 
 //export nox_xxx_pickupDefault_4F31E0
 func nox_xxx_pickupDefault_4F31E0(cobj1 *nox_object_t, cobj2 *nox_object_t, a3 int) int {
-	return Nox_xxx_pickupDefault_4F31E0(asObjectS(cobj1), asObjectS(cobj2), a3)
+	return bool2int(Nox_xxx_pickupDefault_4F31E0(asObjectS(cobj1), asObjectS(cobj2), a3))
 }
 
 //export nox_objectPickupAudEvent_4F3D50
 func nox_objectPickupAudEvent_4F3D50(cobj1 *nox_object_t, cobj2 *nox_object_t, a3 int) int {
-	return Nox_objectPickupAudEvent_4F3D50(asObjectS(cobj1), asObjectS(cobj2), a3)
+	return bool2int(Nox_objectPickupAudEvent_4F3D50(asObjectS(cobj1), asObjectS(cobj2), a3))
 }
 
 //export nox_xxx_pickupPotion_4F37D0
 func nox_xxx_pickupPotion_4F37D0(cobj1 *nox_object_t, cobj2 *nox_object_t, a3 int) int {
-	return Nox_xxx_pickupPotion_4F37D0(asObjectS(cobj1), asObjectS(cobj2), a3)
+	return bool2int(Nox_xxx_pickupPotion_4F37D0(asObjectS(cobj1), asObjectS(cobj2), a3))
 }
 
 //export sub_57B370

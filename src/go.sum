@@ -66,8 +66,8 @@ github.com/opennox/noxscript/ns v1.0.3 h1:g4mquMNd0XLI1c49NU8iqeSNx1ThQn/pjYmCXC
 github.com/opennox/noxscript/ns v1.0.3/go.mod h1:31PI1TOOBtih5kAeQ8K8g2k7Vaj5fFApUXsfBDvDXrI=
 github.com/opennox/noxscript/ns/v3 v3.4.8 h1:IBVrPnC9Hswm3Ax2dGDuJ023DeXqwia9dvcnN4I0Qv0=
 github.com/opennox/noxscript/ns/v3 v3.4.8/go.mod h1:7aiCe1OjFNRoEOYLIxAitR3vRoWuKrHUIs3dhJd5etY=
-github.com/opennox/noxscript/ns/v4 v4.21.4 h1:Lvq5Z+WHJ6DoW0tzcArz2g9ul7Ni5GE7AlC5v3ULlHE=
-github.com/opennox/noxscript/ns/v4 v4.21.4/go.mod h1:JKJYzbAfxTsDDkqCVnSa5ezr3xxlA5q76AAVOORAYLc=
+github.com/opennox/noxscript/ns/v4 v4.22.0 h1:KgB7FvLuGtygpl5kCPOg0EErr4C6tpYMvyAtbY9gwlI=
+github.com/opennox/noxscript/ns/v4 v4.22.0/go.mod h1:JKJYzbAfxTsDDkqCVnSa5ezr3xxlA5q76AAVOORAYLc=
 github.com/opennox/vqa-decode v0.0.0-20241130133745-a9e41b67fb2d h1:QnpxWy0MdZhiqBnp0/G7mjkK5UlsvjzesxGwv05Y4Lg=
 github.com/opennox/vqa-decode v0.0.0-20241130133745-a9e41b67fb2d/go.mod h1:dyUPjH/u6jrexPf0KIq0z3JDrN6xpJAUtQR1pu3/aUU=
 github.com/opennox/xwis v0.1.1 h1:K5BLuqBglXc4j7tvdd1MFB+Lz0qkGKZtQNC6hVk/l50=

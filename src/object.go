@@ -546,6 +546,19 @@ func (obj *Object) HasItem(item *server.Object) bool {
 	return obj.SObj().HasItem(item)
 }
 
+func (obj *Object) CountInventory(filter func(it *Object) bool) int {
+	if filter == nil {
+		return obj.SObj().CountInventory(nil)
+	}
+	return obj.SObj().CountInventory(func(it *server.Object) bool {
+		return filter(asObjectS(it))
+	})
+}
+
+func (obj *Object) CountInventoryWithType(typ int) int {
+	return obj.SObj().CountInventoryWithType(typ)
+}
+
 func (obj *Object) Inventory() []*server.Object {
 	return obj.SObj().Inventory()
 }

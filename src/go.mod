@@ -12,7 +12,7 @@ require (
 	github.com/opennox/noxcrypt v0.1.0
 	github.com/opennox/noxscript/ns v1.0.3
 	github.com/opennox/noxscript/ns/v3 v3.4.8
-	github.com/opennox/noxscript/ns/v4 v4.21.4
+	github.com/opennox/noxscript/ns/v4 v4.22.0
 	github.com/opennox/vqa-decode v0.0.0-20241130133745-a9e41b67fb2d
 	github.com/opennox/xwis v0.1.1
 	github.com/prometheus/client_golang v1.20.5
